@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Capital</title>
-<meta name="description" content="Capital, a satirical game about accumulation, influence and the hidden costs of power.">
+<title>EMPIRE</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ── TOKENS ─────────────────────────────────────────────────────── */
@@ -68,7 +66,7 @@ button:focus{outline:none;}
 #bill-svg{animation:float 2.8s ease-in-out infinite;}
 
 /* Golden coin event */
-#golden-coin{position:absolute;width:44px;height:44px;cursor:pointer;display:none;
+#golden-coin{position:fixed;width:44px;height:44px;cursor:pointer;
   background:radial-gradient(circle at 35% 35%,#ffe066,#ffd60a,#b8860b);
   border-radius:50%;border:2px solid #ffd60a;box-shadow:0 0 20px rgba(255,214,10,.7);
   animation:coin-bob 1.8s ease-in-out infinite,coin-glow 1s ease-in-out infinite alternate;
@@ -205,23 +203,14 @@ canvas{width:100%;border-radius:3px;display:block;}
   align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;overflow-y:auto;}
 #endgame.show{display:flex;}
 
-/* ── GODMOD ─────────────────────────────────────────────────────── */
-#godmod{position:fixed;bottom:8px;left:8px;z-index:999;}
-#gm-panel{display:none;background:#111;border:1px solid var(--gold);border-radius:var(--r);
-  padding:10px;margin-bottom:6px;width:170px;}
-.gm-btn{width:100%;background:var(--surface);color:var(--gold);border:1px solid #333;
-  padding:4px 8px;margin-bottom:3px;border-radius:3px;font-size:.58rem;font-weight:700;cursor:pointer;text-align:left;}
-#gm-toggle{background:var(--gold);color:#000;padding:4px 12px;border-radius:20px;
-  font-size:.62rem;font-weight:700;}
-
 /* ── SOUND TOGGLE ───────────────────────────────────────────────── */
 #corner-controls{position:fixed;bottom:8px;right:8px;z-index:999;display:flex;gap:6px;align-items:center;}
 .corner-btn{background:var(--surface);border:1px solid var(--border);padding:5px 10px;border-radius:20px;font-size:.62rem;font-weight:700;min-width:70px;text-align:center;}
 .corner-btn:hover{border-color:var(--accent);}
 
 /* ── FACTORY ZONE ───────────────────────────────────────────────── */
-#factory-zone{display:none;position:relative;z-index:3;margin-top:14px;width:min(620px,calc(100% - 20px));max-height:42vh;overflow-y:auto;background:var(--surface);
-  border:1px solid var(--border);border-radius:var(--r);padding:12px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
+#factory-zone{display:none;position:relative;z-index:3;margin-top:14px;width:min(720px,calc(100% - 20px));max-height:52vh;overflow-y:auto;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r);padding:14px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;}
 .fac-title{font-size:.52rem;letter-spacing:2px;color:var(--dim);text-transform:uppercase;
   font-family:var(--mono);margin-bottom:10px;}
 .fac-row{display:flex;align-items:center;gap:7px;margin-bottom:6px;min-width:0;}
@@ -246,6 +235,51 @@ canvas{width:100%;border-radius:3px;display:block;}
 .income-pop{position:absolute;pointer-events:none;font-family:var(--mono);font-weight:700;color:var(--accent);text-shadow:0 0 14px rgba(200,255,0,.35);animation:income-pop 1.15s ease-out forwards;white-space:nowrap;}
 @keyframes income-pop{0%{opacity:0;transform:translateY(12px) scale(.88);}15%{opacity:1;}100%{opacity:0;transform:translateY(-46px) scale(1.05);}}
 .si-temp{color:var(--danger);font-weight:700;margin-left:6px;}
+
+/* ── CLICK UPGRADES PANEL ───────────────────────────────────────── */
+#click-panel{margin-top:14px;width:min(620px,calc(100% - 20px));z-index:2;}
+#click-panel-inner{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:flex-start;}
+
+/* Click counter */
+#click-counter{font-size:.58rem;color:var(--dim);font-family:var(--mono);text-align:center;margin-top:5px;letter-spacing:.5px;}
+
+/* Sprint button */
+#sprint-btn{position:relative;padding:7px 18px;border:1px solid var(--accent2);border-radius:20px;
+  font-size:.62rem;font-weight:700;color:var(--accent2);letter-spacing:1px;text-transform:uppercase;
+  cursor:pointer;transition:all .18s ease;overflow:hidden;white-space:nowrap;}
+#sprint-btn:hover:not([disabled]){background:rgba(0,229,255,.08);}
+#sprint-btn[disabled]{opacity:.4;cursor:not-allowed;pointer-events:none;}
+#sprint-btn .sprint-cd{display:block;font-size:.48rem;color:var(--dim);font-weight:400;letter-spacing:0;margin-top:1px;}
+#sprint-fill{position:absolute;bottom:0;left:0;height:2px;background:var(--accent2);width:0%;transition:width .1s linear;border-radius:0 0 20px 20px;}
+
+/* Click upgrade shop items */
+.click-upg{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:8px 12px;cursor:pointer;transition:border-color var(--trans);display:flex;align-items:center;gap:9px;min-width:0;}
+.click-upg:hover:not([disabled]){border-color:var(--accent);}
+.click-upg[disabled]{opacity:.35;cursor:not-allowed;pointer-events:none;}
+.click-upg .cu-icon{font-size:1.1rem;flex-shrink:0;}
+.click-upg .cu-body{min-width:0;flex:1;}
+.click-upg .cu-name{font-size:.65rem;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.click-upg .cu-cost{font-size:.58rem;font-family:var(--mono);color:var(--accent);}
+.click-upg .cu-stat{font-size:.52rem;color:var(--dim);}
+
+/* Crit animation */
+@keyframes crit-burst{
+  0%{transform:translateY(0) scale(1.6);opacity:1;}
+  60%{opacity:1;}
+  100%{transform:translateY(-90px) scale(1.1);opacity:0;}
+}
+.floater.crit{animation:crit-burst .85s ease-out forwards;color:var(--gold)!important;
+  font-size:1.5rem!important;text-shadow:0 0 18px rgba(255,214,10,.7);}
+
+/* Bill shake for crit */
+@keyframes bill-crit{0%,100%{transform:translateX(0);}15%{transform:translateX(-6px) rotate(-2deg);}35%{transform:translateX(6px) rotate(2deg);}55%{transform:translateX(-4px);}75%{transform:translateX(4px);}90%{transform:translateX(-2px);}}
+#bill-svg.crit-shake{animation:bill-crit .35s ease!important;}
+
+/* Coin burst particles */
+.coin-particle{position:fixed;pointer-events:none;font-size:.85rem;z-index:501;
+  animation:coin-fly .6s ease-out forwards;}
+@keyframes coin-fly{0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:var(--fly) scale(.5);}}
 </style>
 </head>
 <body>
@@ -338,19 +372,6 @@ canvas{width:100%;border-radius:3px;display:block;}
       <div id="ach-list"></div>
     </div>
 
-    <!-- Dilemma Widget -->
-    <div class="widget ui-hide" id="w-dilemma" style="border-color:#3a2000;">
-      <div class="w-title" style="color:var(--warn);">⚡ Le Grand Choix</div>
-      <div style="font-size:.62rem;color:var(--dim);line-height:1.6;margin-bottom:10px;">
-        L'opinion publique menace votre empire. Deux options s'offrent à vous.
-      </div>
-      <button class="act-btn green" style="margin-bottom:6px;font-size:.58rem;" onclick="G.choixTransition()">
-        ♻ Transition écologique<br><span style="opacity:.6;font-size:.5rem;font-weight:400;">−80% patrimoine · −90% revenus futurs</span>
-      </button>
-      <button class="act-btn red" style="font-size:.58rem;" onclick="G.choixDesinfo()">
-        📡 Financer la désinformation<br><span style="opacity:.6;font-size:.5rem;font-weight:400;">Coût modéré · Opinion ↓ mais pollution continue</span>
-      </button>
-    </div>
   </div>
 
   <!-- CENTER -->
@@ -379,21 +400,34 @@ canvas{width:100%;border-radius:3px;display:block;}
         <circle cx="27" cy="48" r="11" fill="none" stroke="#c8ff00" stroke-width=".7" opacity=".5"/>
         <text x="27" y="45" font-size="7" text-anchor="middle" fill="#c8ff00" font-weight="700" font-family="monospace" opacity=".9">100</text>
         <text x="27" y="53" font-size="4" text-anchor="middle" fill="#c8ff00" font-family="monospace" opacity=".5">EMP</text>
-        <text x="27" y="19" font-size="3.5" text-anchor="middle" fill="#c8ff00" font-family="monospace" opacity=".4" letter-spacing="1">CAPITAL</text>
+        <text x="27" y="19" font-size="3.5" text-anchor="middle" fill="#c8ff00" font-family="monospace" opacity=".4" letter-spacing="1">EMPIRE</text>
         <text x="27" y="78" font-size="3.5" text-anchor="middle" fill="#c8ff00" font-family="monospace" opacity=".4" letter-spacing="1">SERIES</text>
         <rect x="176" y="10" width="34" height="76" rx="3" fill="#0d1f0d" stroke="#c8ff00" stroke-width=".5" opacity=".6"/>
         <circle cx="193" cy="48" r="11" fill="none" stroke="#c8ff00" stroke-width=".7" opacity=".5"/>
         <text x="193" y="45" font-size="7" text-anchor="middle" fill="#c8ff00" font-weight="700" font-family="monospace" opacity=".9">100</text>
         <text x="193" y="53" font-size="4" text-anchor="middle" fill="#c8ff00" font-family="monospace" opacity=".5">EMP</text>
-        <text x="193" y="19" font-size="3.5" text-anchor="middle" fill="#c8ff00" font-family="monospace" opacity=".4" letter-spacing="1">CAPITAL</text>
+        <text x="193" y="19" font-size="3.5" text-anchor="middle" fill="#c8ff00" font-family="monospace" opacity=".4" letter-spacing="1">EMPIRE</text>
         <text x="193" y="78" font-size="3.5" text-anchor="middle" fill="#c8ff00" font-family="monospace" opacity=".4" letter-spacing="1">SERIES</text>
-        <text x="110" y="22" font-size="8" text-anchor="middle" fill="#c8ff00" font-weight="700" font-family="monospace" letter-spacing="5" opacity=".7" filter="url(#glow)">CAPITAL</text>
+        <text x="110" y="22" font-size="8" text-anchor="middle" fill="#c8ff00" font-weight="700" font-family="monospace" letter-spacing="5" opacity=".7" filter="url(#glow)">THE EMPIRE</text>
         <line x1="56" y1="50" x2="80" y2="50" stroke="#c8ff00" stroke-width=".4" opacity=".25"/>
         <line x1="140" y1="50" x2="164" y2="50" stroke="#c8ff00" stroke-width=".4" opacity=".25"/>
         <text x="110" y="66" font-size="40" text-anchor="middle" fill="#c8ff00" font-weight="700" font-family="serif" filter="url(#glow)" opacity=".95">$</text>
         <text x="110" y="84" font-size="3.5" text-anchor="middle" fill="#c8ff00" opacity=".3" font-family="monospace" letter-spacing="2">IN GREED WE TRUST · 2025</text>
       </svg>
-      <div id="golden-coin">💰</div>
+      <div id="golden-coin" title="Investissements Privés">💼</div>
+    </div>
+
+    <!-- CLICK PANEL : counter + sprint + upgrades -->
+    <div id="click-panel">
+      <div id="click-counter">0 clics</div>
+      <div id="click-panel-inner" style="margin-top:7px;">
+        <button id="sprint-btn" onclick="G.activateSprint()">
+          ⚡ <span id="sprint-label">SPRINT</span>
+          <span class="sprint-cd" id="sprint-cd-txt"></span>
+          <span id="sprint-fill"></span>
+        </button>
+        <div id="click-upg-list" style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center;"></div>
+      </div>
     </div>
 
     <div id="factory-zone">
@@ -467,7 +501,7 @@ canvas{width:100%;border-radius:3px;display:block;}
 <!-- ENDGAME -->
 <div id="endgame">
   <div style="font-size:2rem;margin-bottom:8px;">🏛️</div>
-  <h1 style="font-size:1.6rem;color:var(--danger);margin-bottom:8px;">CAPITAL IS COMPLETE.</h1>
+  <h1 style="font-size:1.6rem;color:var(--danger);margin-bottom:8px;">L'EMPIRE EST COMPLET.</h1>
   <p id="eg-stats" style="max-width:520px;color:var(--dim);font-size:.78rem;margin-bottom:18px;line-height:1.7;"></p>
   <div style="border:1px solid var(--border);padding:18px;max-width:520px;margin-bottom:18px;text-align:left;border-radius:var(--r);">
     <p id="eg-hidden-title" style="color:var(--danger);font-size:.7rem;font-weight:700;margin-bottom:10px;text-align:center;letter-spacing:2px;">CE QUE VOS BILANS N'AFFICHENT PAS</p>
@@ -477,19 +511,7 @@ canvas{width:100%;border-radius:3px;display:block;}
   <button id="eg-restart" onclick="location.reload()" style="background:transparent;border:1px solid var(--danger);color:var(--danger);padding:9px 28px;cursor:pointer;font-family:var(--font);font-weight:700;text-transform:uppercase;letter-spacing:2px;border-radius:var(--r);">↺ RECOMMENCER</button>
 </div>
 
-<!-- GODMOD -->
-<div id="godmod">
-  <div id="gm-panel">
-    <button class="gm-btn" onclick="G.gm(500)">+500$</button>
-    <button class="gm-btn" onclick="G.gm(1e6)">+1M$</button>
-    <button class="gm-btn" onclick="G.gm(1e9)">+1Md$</button>
-    <button class="gm-btn" onclick="G.gm(1e12)">+1T$</button>
-    <button class="gm-btn" onclick="G.gm(1e15)">+1Qa$</button>
-    <button class="gm-btn" onclick="G.gmInf()">INF: <span id="gm-inf">OFF</span></button>
-    <button class="gm-btn" onclick="G.gmUnlock()">UNLOCK ALL</button>
-  </div>
-  <button id="gm-toggle" onclick="document.getElementById('gm-panel').style.display=document.getElementById('gm-panel').style.display==='block'?'none':'block'">GODMOD</button>
-</div>
+
 <div id="corner-controls">
   <button id="lang-btn" class="corner-btn" onclick="G.toggleLanguage()">🌐 EN</button>
   <button id="snd-btn" class="corner-btn" onclick="G.toggleSound()">🔊 SOUND</button>
@@ -537,10 +559,16 @@ const achEarned = new Set();
 let frenzyMult = 1, frenzyTimer = 0;
 let goldenCoinTimer = 0, goldenCoinCD = 0;
 
+/* ── NEW: click features ── */
+let totalClicks = 0;
+let clickUpgBought = new Set();
+let sprintCooldown = 0, sprintActive = false, sprintTimer = 0;
+const SPRINT_CD = 90, SPRINT_DUR = 5, SPRINT_MULT = 3;
+
 /* news layers */
 let newsLayer = 'normal', newsPending = null;
 const LANG_ORDER = ['en', 'fr', 'es', 'ru'];
-let lang = localStorage.getItem('capital_lang') || 'en';
+let lang = localStorage.getItem('empire_lang') || 'en';
 if (!LANG_ORDER.includes(lang)) lang = 'en';
 let climatePressure = 0, climatePurchases = 0, lastEcoDraw = 0;
 const incomePulseSources = [];
@@ -627,6 +655,8 @@ const SFX = {
   },
   ui: () => { tone(620, 'sine', .05, .035); setTimeout(() => tone(820, 'sine', .06, .025), 35); },
   error: () => { tone(180, 'sawtooth', .08, .04); setTimeout(() => tone(140, 'sine', .06, .025), 60); },
+  crit: () => { tone(1400, 'sine', .04, .12); setTimeout(() => tone(1800, 'sine', .06, .1), 30); setTimeout(() => tone(2200, 'sine', .09, .08), 70); noise(.08, .06); },
+  sprint: () => { [300,400,500,700,900].forEach((f,i) => setTimeout(() => tone(f,'sine',.14,.1), i*60)); },
 };
 
 /* ═══════════════════════════════════════════════
@@ -664,7 +694,7 @@ const ACHIEVEMENTS = [
   { id: 'grand', icon: '💰', name: 'Millionnaire', check: () => money >= 1e6 },
   { id: 'billion', icon: '🤑', name: 'Milliardaire', check: () => money >= 1e9 },
   { id: 'trillion', icon: '💎', name: 'Trillionnaire', check: () => money >= 1e12 },
-  { id: 'golden_caught', icon: '✨', name: 'Pièce d\'Or', check: () => achEarned.has('golden_caught') },
+  { id: 'golden_caught', icon: '✨', name: 'Investissements Privés', check: () => achEarned.has('golden_caught') },
   { id: 'scandal_1', icon: '🤫', name: 'Couverture', check: () => scandals >= 1 },
   { id: 'scandal_5', icon: '🎭', name: 'Maître du mensonge', check: () => scandals >= 5 },
   { id: 'media_baron', icon: '📺', name: 'Baron des médias', check: () => !!assets['p_tv'] },
@@ -673,6 +703,200 @@ const ACHIEVEMENTS = [
   { id: 'stock_prof', icon: '📈', name: 'Financier', check: () => achEarned.has('stock_prof') },
   { id: 'factory_1', icon: '🏭', name: 'Industriel', check: () => facUnlocked },
 ];
+
+/* ═══════════════════════════════════════════════
+   CLICK UPGRADES DATA
+═══════════════════════════════════════════════ */
+const CLICK_UPGRADES = [
+  { id:'cu1', icon:'✍️', mult:3,  cost:()=>500,          minClicks:5   },
+  { id:'cu2', icon:'🖊️', mult:4,  cost:()=>8000,         minClicks:20  },
+  { id:'cu3', icon:'📋', mult:6,  cost:()=>120000,       minClicks:50  },
+  { id:'cu4', icon:'📊', mult:10, cost:()=>2000000,      minClicks:100 },
+  { id:'cu5', icon:'💼', mult:18, cost:()=>50000000,     minClicks:200 },
+  { id:'cu6', icon:'🏦', mult:30, cost:()=>1500000000,   minClicks:500 },
+  { id:'cu7', icon:'🏛️', mult:50, cost:()=>80000000000,  minClicks:1000},
+];
+
+const CLICK_UPG_TEXT = {
+  en: [
+    {name:'Sharp Pen',       stat:'Click ×3'},
+    {name:'Fountain Pen',    stat:'Click ×4'},
+    {name:'Notepad',         stat:'Click ×6'},
+    {name:'Spreadsheet',     stat:'Click ×10'},
+    {name:'Consultant',      stat:'Click ×18'},
+    {name:'Banker',          stat:'Click ×30'},
+    {name:'Director',        stat:'Click ×50'},
+  ],
+  fr: [
+    {name:'Stylo affûté',   stat:'Clic ×3'},
+    {name:'Stylo plume',    stat:'Clic ×4'},
+    {name:'Bloc-notes',     stat:'Clic ×6'},
+    {name:'Tableur',        stat:'Clic ×10'},
+    {name:'Conseiller',     stat:'Clic ×18'},
+    {name:'Banquier',       stat:'Clic ×30'},
+    {name:'Directeur',      stat:'Clic ×50'},
+  ],
+  es: [
+    {name:'Pluma afilada',stat:'Clic ×3'},
+    {name:'Pluma fuente', stat:'Clic ×4'},
+    {name:'Cuaderno',     stat:'Clic ×6'},
+    {name:'Hoja de cálculo',stat:'Clic ×10'},
+    {name:'Consultor',    stat:'Clic ×18'},
+    {name:'Banquero',     stat:'Clic ×30'},
+    {name:'Director',     stat:'Clic ×50'},
+  ],
+  ru: [
+    {name:'Острое перо',  stat:'Клик ×3'},
+    {name:'Авторучка',    stat:'Клик ×4'},
+    {name:'Блокнот',      stat:'Клик ×6'},
+    {name:'Таблица',      stat:'Клик ×10'},
+    {name:'Консультант',  stat:'Клик ×18'},
+    {name:'Банкир',       stat:'Клик ×30'},
+    {name:'Директор',     stat:'Клик ×50'},
+  ],
+};
+
+function tClickUpg(upg) {
+  const idx = CLICK_UPGRADES.indexOf(upg);
+  const texts = CLICK_UPG_TEXT[lang] || CLICK_UPG_TEXT.en;
+  return texts[idx] || { name: upg.id, stat: 'Click ×' + upg.mult };
+}
+
+function getClickMult() {
+  let m = 1;
+  CLICK_UPGRADES.forEach(u => { if (clickUpgBought.has(u.id)) m *= u.mult; });
+  return m;
+}
+
+function buildClickUpgList() {
+  const container = document.getElementById('click-upg-list');
+  container.innerHTML = '';
+  // Affiche le premier non-acheté visible (par minClicks OU si le précédent vient d'être acheté)
+  let shownNext = false;
+  CLICK_UPGRADES.forEach((upg, idx) => {
+    if (clickUpgBought.has(upg.id)) return;
+    // Visible si : assez de clics, OU si c'est le suivant direct après le dernier acheté
+    const prevBought = idx === 0 || clickUpgBought.has(CLICK_UPGRADES[idx - 1].id);
+    const enoughClicks = totalClicks >= upg.minClicks;
+    if (!enoughClicks && !prevBought) return;
+    if (shownNext && !enoughClicks) return; // n'affiche qu'un seul "prochain" à la fois
+    if (!enoughClicks) shownNext = true;
+    const t = tClickUpg(upg);
+    const cost = upg.cost();
+    const btn = document.createElement('button');
+    btn.className = 'click-upg';
+    btn.id = 'cu_' + upg.id;
+    btn.innerHTML = `<span class="cu-icon">${upg.icon}</span><div class="cu-body"><div class="cu-name">${t.name}</div><div class="cu-stat">${t.stat}</div><div class="cu-cost">$${fmtM(cost)}</div></div>`;
+    btn.disabled = money < cost;
+    btn.onclick = () => buyClickUpg(upg.id);
+    container.appendChild(btn);
+  });
+}
+
+function buyClickUpg(id) {
+  unlockAudio();
+  const upg = CLICK_UPGRADES.find(u => u.id === id);
+  if (!upg || clickUpgBought.has(id)) return;
+  const cost = upg.cost();
+  if (money < cost && !inf) { SFX.error(); return; }
+  if (!inf) money -= cost;
+  clickUpgBought.add(id);
+  SFX.buy2();
+  const t = tClickUpg(upg);
+  toast(`⚡ ${t.name} — ${t.stat}`, 'accent');
+  buildClickUpgList();
+  updateUI();
+}
+
+function refreshClickUpgList() {
+  let needRebuild = false;
+  CLICK_UPGRADES.forEach((upg, idx) => {
+    if (clickUpgBought.has(upg.id)) return;
+    const prevBought = idx === 0 || clickUpgBought.has(CLICK_UPGRADES[idx - 1].id);
+    if ((totalClicks >= upg.minClicks || prevBought) && !document.getElementById('cu_' + upg.id)) needRebuild = true;
+  });
+  if (needRebuild) buildClickUpgList();
+  else {
+    CLICK_UPGRADES.forEach(upg => {
+      const btn = document.getElementById('cu_' + upg.id);
+      if (btn) btn.disabled = money < upg.cost();
+    });
+  }
+}
+
+/* Sprint */
+function activateSprint() {
+  unlockAudio();
+  if (sprintCooldown > 0 || sprintActive) return;
+  sprintActive = true;
+  sprintTimer = SPRINT_DUR;
+  sprintCooldown = SPRINT_CD;
+  SFX.sprint();
+  toast(tr('sprintActive'), 'accent2');
+}
+
+function tickSprint(dt) {
+  if (sprintActive) {
+    sprintTimer -= dt;
+    if (sprintTimer <= 0) { sprintActive = false; sprintTimer = 0; }
+  }
+  if (sprintCooldown > 0) {
+    sprintCooldown -= dt;
+    if (sprintCooldown < 0) sprintCooldown = 0;
+  }
+  // Update sprint button UI
+  const btn = document.getElementById('sprint-btn');
+  const cdTxt = document.getElementById('sprint-cd-txt');
+  const fill = document.getElementById('sprint-fill');
+  const label = document.getElementById('sprint-label');
+  if (!btn) return;
+  if (sprintActive) {
+    btn.disabled = true;
+    label.textContent = tr('sprintOn') + ' ×' + SPRINT_MULT;
+    cdTxt.textContent = Math.ceil(sprintTimer) + 's';
+    fill.style.width = (sprintTimer / SPRINT_DUR * 100) + '%';
+    fill.style.background = 'var(--accent2)';
+  } else if (sprintCooldown > 0) {
+    btn.disabled = true;
+    label.textContent = tr('sprintCd');
+    cdTxt.textContent = Math.ceil(sprintCooldown) + 's';
+    fill.style.width = ((SPRINT_CD - sprintCooldown) / SPRINT_CD * 100) + '%';
+    fill.style.background = 'var(--muted)';
+  } else {
+    btn.disabled = false;
+    label.textContent = '⚡ ' + tr('sprintLabel');
+    cdTxt.textContent = '';
+    fill.style.width = '100%';
+    fill.style.background = 'var(--accent2)';
+  }
+}
+
+/* Click counter display */
+function updateClickCounter() {
+  const el = document.getElementById('click-counter');
+  if (!el) return;
+  const txt = tr('clickCount').replace('{n}', totalClicks.toLocaleString());
+  el.textContent = txt;
+}
+
+/* Crit coin burst */
+function spawnCritParticles(x, y) {
+  const coins = ['💰','💵','🪙','✨'];
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'coin-particle';
+    const angle = (Math.PI * 2 / 8) * i;
+    const dist = 55 + Math.random() * 55;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist - 20;
+    p.style.setProperty('--fly', `translate(${dx}px,${dy}px)`);
+    p.style.left = (x - 12) + 'px';
+    p.style.top  = (y - 12) + 'px';
+    p.textContent = coins[Math.floor(Math.random() * coins.length)];
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 700);
+  }
+}
 
 function buildAchPanel() {
   const el = document.getElementById('ach-list');
@@ -755,72 +979,72 @@ const ITEMS = [
     desc:'Le juste prix est celui que quelqu\'un acceptera sous pression.', stat:'Revenus usine ×3', target:'__fac_revenue__', mult:3, next:'p_holding',
     onBuy: () => { facRevMult = (facRevMult || 1) * 3; } },
 
-  { id:'p_holding', type:'gen', cost:14000000, ips:5000, eco:.005, icon:'🌐',
+  { id:'p_holding', type:'gen', cost:10000000, ips:5000, eco:.005, icon:'🌐',
     name:'Holding internationale', desc:'Présente partout, domiciliée ailleurs, responsable nulle part.', next:'fac_phone' },
 
-  { id:'fac_phone', type:'factory_product', cost:15000000, icon:'📱', facPid:'fac_phone', name:'Ligne smartphones',
+  { id:'fac_phone', type:'factory_product', cost:11000000, icon:'📱', facPid:'fac_phone', name:'Ligne smartphones',
     desc:'Assemblés par des sous-traitants. Pas de questions sur les conditions.', stat:'Nouveau produit d\'usine', next:'m1' },
 
   /* ── TRANSITION PHASE 2 ── */
-  { id:'m1', type:'mode', cost:32000000, icon:'📡', name:'PHASE 2 — L\'EMPIRE MÉDIATIQUE',
+  { id:'m1', type:'mode', cost:22000000, icon:'📡', name:'PHASE 2 — L\'EMPIRE MÉDIATIQUE',
     desc:'Produire des biens rapporte beaucoup. Produire la réalité rapporte davantage.', newMode:'influence', next:'p5_marche' },
 
   /* ── PHASE 2 ── */
   /* UI UPGRADE : débloque le panneau gauche bourse */
-  { id:'p5_marche', type:'ui', cost:80000000, icon:'📈', uiLevel:3,
+  { id:'p5_marche', type:'ui', cost:55000000, icon:'📈', uiLevel:3,
     name:'Salle des marchés', desc:'L\'argent peut désormais travailler pendant que vous spéculez. Débloque la bourse.', stat:'Bourse', next:'stock_immo',
     onBuy: () => { document.getElementById('app').classList.add('left-open'); document.getElementById('w-stock').classList.remove('ui-hide'); renderStockOptions(); } },
 
-  { id:'p5', type:'gen', cost:140000000, ips:35000, eco:.01, icon:'🤖',
+  { id:'p5', type:'gen', cost:95000000, ips:35000, eco:.01, icon:'🤖',
     name:'Ferme à trolls', desc:'Des milliers de comptes sincèrement artificiels défendent vos intérêts.', flavor:'Débat public empoisonné durablement. Bilan : inestimable.', next:'mod_stock_hft' },
 
-  { id:'mod_stock_hft', type:'mod', cost:260000000, icon:'📊', name:'Trading haute fréquence',
+  { id:'mod_stock_hft', type:'mod', cost:180000000, icon:'📊', name:'Trading haute fréquence',
     desc:'Quelques millisecondes d\'avance suffisent à battre presque tout le monde.', stat:'Revenus actions +35%', target:'__stock_bonus__', mult:1.35, next:'stock_tech',
     onBuy: () => { stockBonusMult = (stockBonusMult || 1) * 1.35; } },
 
-  { id:'p5b', type:'gen', cost:500000000, ips:95000, eco:.008, icon:'🎙️',
+  { id:'p5b', type:'gen', cost:340000000, ips:95000, eco:.008, icon:'🎙️',
     name:'Réseau de podcasts sponsorisés', desc:'Des voix libres, financées librement, orientées subtilement.', next:'p5c' },
 
-  { id:'p5c', type:'gen', cost:900000000, ips:220000, eco:.009, icon:'🧠',
+  { id:'p5c', type:'gen', cost:600000000, ips:220000, eco:.009, icon:'🧠',
     name:'Think Tank indépendant', desc:'Les conclusions scientifiques arrivent souvent après les financements.',
     flavor:'Publication phare : "Pourquoi l\'impôt sur la fortune nuit aux classes moyennes". Financeur : anonyme.', next:'mod_media' },
 
-  { id:'mod_media', type:'mod', cost:1600000000, icon:'📰', name:'Rachat presse économique',
+  { id:'mod_media', type:'mod', cost:1100000000, icon:'📰', name:'Rachat presse économique',
     desc:'Les marchés aiment la stabilité narrative.', stat:'Médias ×2', target:'p_tv', mult:2, next:'p6' },
 
-  { id:'p6', type:'gen', cost:3000000000, ips:700000, eco:.04, icon:'📱',
+  { id:'p6', type:'gen', cost:2000000000, ips:700000, eco:.04, icon:'📱',
     name:'Réseau social dominant', desc:'La colère retient l\'attention. L\'attention vend de la publicité.',
     flavor:'Études internes classifiées : dépression +37%, anxiété +52%.', next:'mod_data',
     onBuy: () => { newsPending = 'tv'; } },
 
-  { id:'mod_data', type:'mod', cost:5500000000, icon:'🕵️', name:'Achat de données privées',
+  { id:'mod_data', type:'mod', cost:3700000000, icon:'🕵️', name:'Achat de données privées',
     desc:'Mieux connaître les gens qu\'eux-mêmes reste rentable.', stat:'Actions +60%', target:'__stock_bonus__', mult:1.60, next:'p6b',
     onBuy: () => { stockBonusMult = (stockBonusMult || 1) * 1.60; } },
 
-  { id:'p6b', type:'gen', cost:10000000000, ips:2000000, eco:.03, icon:'⚖️',
+  { id:'p6b', type:'gen', cost:6800000000, ips:2000000, eco:.03, icon:'⚖️',
     name:'Lobbying parlementaire', desc:'Quand la loi gêne, on peut l\'accompagner.',
     flavor:'30Md$ investis. Retour estimé en contrats publics : 600Md$.', next:'mod_bots' },
 
-  { id:'mod_bots', type:'mod', cost:18000000000, icon:'💻', name:'Bots de marché',
+  { id:'mod_bots', type:'mod', cost:12000000000, icon:'💻', name:'Bots de marché',
     desc:'Paniques humaines, profits automatiques.', stat:'Actions ×2', target:'__stock_bonus__', mult:2, next:'mod_think',
     onBuy: () => { stockBonusMult = (stockBonusMult || 1) * 2; } },
 
-  { id:'mod_think', type:'mod', cost:35000000000, icon:'🎓', name:'Chaire universitaire sponsorisée',
+  { id:'mod_think', type:'mod', cost:23000000000, icon:'🎓', name:'Chaire universitaire sponsorisée',
     desc:'Le savoir progresse quand il est bien orienté.', stat:'×3 Think Tank', target:'p5c', mult:3, next:'p6c' },
 
-  { id:'p6c', type:'gen', cost:70000000000, ips:7000000, eco:.03, icon:'🗳️',
+  { id:'p6c', type:'gen', cost:47000000000, ips:7000000, eco:.03, icon:'🗳️',
     name:'Financement multi-partis', desc:'Soutenir tous les favoris évite les mauvaises surprises.', next:'stock_vulture' },
 
-  { id:'mod_fiscal', type:'mod', cost:140000000000, icon:'🌍', name:'Optimisation fiscale globale',
+  { id:'mod_fiscal', type:'mod', cost:95000000000, icon:'🌍', name:'Optimisation fiscale globale',
     desc:'Les frontières existent surtout pour les autres.', stat:'Tous coûts −20%', target:'__global_cost__', mult:.80, next:'p_chaine',
     onBuy: () => { globalCostMult = (globalCostMult || 1) * .80; } },
 
-  { id:'p_chaine', type:'gen', cost:280000000000, ips:18000000, eco:.06, icon:'📺',
+  { id:'p_chaine', type:'gen', cost:190000000000, ips:18000000, eco:.06, icon:'📺',
     name:'Chaîne info continue nationale', desc:'Urgence permanente, réflexion différée.', next:'m2' },
 
   /* ── TRANSITION PHASE 3 ── */
   /* UI UPGRADE : débloque eco + opinion */
-  { id:'m2', type:'mode', cost:600000000000, icon:'🧨', name:'PHASE 3 — ARCHITECTURE D\'INFLUENCE TOTALE',
+  { id:'m2', type:'mode', cost:400000000000, icon:'🧨', name:'PHASE 3 — ARCHITECTURE D\'INFLUENCE TOTALE',
     desc:'Marchés, médias, élus, données : l\'écosystème est prêt. Débloque le suivi climatique.', newMode:'tyrant', next:'p7',
     onBuy: () => {
       opinionUnlocked = true;
@@ -831,50 +1055,50 @@ const ITEMS = [
   },
 
   /* ── PHASE 3 ── */
-  { id:'p7', type:'gen', cost:1500000000000, ips:40000000, eco:.25, icon:'🛢️',
+  { id:'p7', type:'gen', cost:1000000000000, ips:40000000, eco:.25, icon:'🛢️',
     name:'Méga Complexe Énergétique', desc:'Le monde demandait de l\'énergie. Vous avez entendu seulement la seconde partie.',
     flavor:'Votre lobby a bloqué 4 accords climatiques. Votre fondation écolo reçoit des subventions.', next:'p7_verite' },
 
-  { id:'p7_verite', type:'gen_once', cost:3000000000000, ips:0, eco:0, icon:'📡',
+  { id:'p7_verite', type:'gen_once', cost:2000000000000, ips:0, eco:0, icon:'📡',
     name:'Ministère de la Vérité Privé', desc:'Les faits changent vite. Heureusement, vos archives aussi.',
     stat:'Médias ×4 · scandales annulés', next:'p7b',
     onBuy: () => { mods['p_tv'] = (mods['p_tv'] || 1) * 4; ministereVerite = true; newsPending = 'orwell'; } },
 
-  { id:'p7b', type:'gen', cost:6000000000000, ips:180000000, eco:2.5, icon:'⛏️',
+  { id:'p7b', type:'gen', cost:4000000000000, ips:180000000, eco:2.5, icon:'⛏️',
     name:'Forage du permafrost arctique', desc:'La fonte révèle des ressources. Le timing est parfait.',
     flavor:'Chaque mètre foré libère du méthane fossile vieux de 50 000 ans.', next:'p7c' },
 
-  { id:'stock_fossil', type:'stock', legacy:true, cost:8000000000000, icon:'📈', stockIdx:1,
+  { id:'stock_fossil', type:'stock', legacy:true, cost:5500000000000, icon:'📈', stockIdx:1,
     name:'Débloque : NECROÏL ENERGY', desc:'Rendement ~22%. Chaque crise climatique est un trimestre de plus.', stat:'Nouvelle valeur boursière', next:'p7c' },
 
-  { id:'p7c', type:'mod', cost:11000000000000, icon:'👁️', name:'Réseau de surveillance civique',
+  { id:'p7c', type:'mod', cost:7500000000000, icon:'👁️', name:'Réseau de surveillance civique',
     desc:'Un consommateur prévisible est un citoyen serein.', stat:'Tous revenus ×1.8', target:'__global__', mult:1.8, next:'p7d' },
 
-  { id:'p7d', type:'gen', cost:20000000000000, ips:420000000, eco:4.0, icon:'🌊',
+  { id:'p7d', type:'gen', cost:13000000000000, ips:420000000, eco:4.0, icon:'🌊',
     name:'Exploitation des fonds marins', desc:'Les abysses contenaient encore des choses qui n\'étaient à personne.',
     flavor:'Destruction des écosystèmes abyssaux. Acidification accélérée. ROI : +4 000%.', next:'fac_weapon' },
 
-  { id:'fac_weapon', type:'factory_product', cost:30000000000000, icon:'🔩', facPid:'fac_weapon',
+  { id:'fac_weapon', type:'factory_product', cost:20000000000000, icon:'🔩', facPid:'fac_weapon',
     name:'Ligne de production armement', desc:'Composants militaires. Destination finale : confidentielle.',
     flavor:'Vos usines produisent des pièces pour systèmes d\'armes exportés dans 30 pays.', stat:'Nouveau produit d\'usine', next:'p8' },
 
-  { id:'p8', type:'gen', cost:70000000000000, ips:900000000, eco:.5, icon:'☁️',
+  { id:'p8', type:'gen', cost:46000000000000, ips:900000000, eco:.5, icon:'☁️',
     name:'Contrôle climatique spéculatif', desc:'Vendre des solutions aux crises améliore beaucoup les crises.', next:'p8b' },
 
-  { id:'p8b', type:'gen', cost:130000000000000, ips:2000000000, eco:.3, icon:'🚀',
+  { id:'p8b', type:'gen', cost:85000000000000, ips:2000000000, eco:.3, icon:'🚀',
     name:'Extraction orbitale privée', desc:'La Terre fatigue. Heureusement, l\'espace n\'a aucun syndicat.', next:'p8c' },
 
-  { id:'p8c', type:'gen', cost:240000000000000, ips:4500000000, eco:.2, icon:'🧬',
+  { id:'p8c', type:'gen', cost:155000000000000, ips:4500000000, eco:.2, icon:'🧬',
     name:'Brevets sur semences résistantes', desc:'Les récoltes meurent. Vos licences vivent.', next:'p8d' },
 
-  { id:'p8d', type:'gen', cost:800000000000000, ips:10000000000, eco:5.0, icon:'🏭',
+  { id:'p8d', type:'gen', cost:520000000000000, ips:10000000000, eco:5.0, icon:'🏭',
     name:'Usines à charbon nouvelle génération', desc:'Ancienne énergie, nouvelles marges.',
     flavor:'Subventionnées par des États achetés. Chaque tonne de CO₂ est une ligne de bénéfice.', next:'p8e' },
 
-  { id:'p8e', type:'gen', cost:3000000000000000, ips:28000000000, eco:.1, icon:'🌑',
+  { id:'p8e', type:'gen', cost:1950000000000000, ips:28000000000, eco:.1, icon:'🌑',
     name:'Colonie minière lunaire', desc:'Un nouveau monde. Même vieux modèle.', next:'p_final' },
 
-  { id:'p_final', type:'gen_once', cost:12000000000000000, ips:1000000000000000000, eco:0, icon:'👑',
+  { id:'p_final', type:'gen_once', cost:7800000000000000, ips:1000000000000000000, eco:0, icon:'👑',
     name:'Statut Productif Universel', desc:'Chaque humain devient unité économique. L\'existence seule constitue une participation au marché.',
     stat:'Revenus ×10 · ×1 000 000$/clic', next:null,
     onBuy: () => { if (finalSequenceStarted) return; finalSequenceStarted = true; mods['__global__'] = (mods['__global__'] || 1) * 10; mods['__click__'] = (mods['__click__'] || 1) * 1000000; ips = calcIps(); toast(tr('finalCountdown'), 'danger'); setTimeout(showEndgame, 5000); } },
@@ -889,7 +1113,7 @@ const ITEMS = [
   { id:'stock_defense', type:'stock', legacy:true, cost:80000000000000, icon:'📈', stockIdx:2,
     name:'Débloque : THANARMS GLOBAL', desc:'Rendement ~35%. Chaque conflit ouvert fait monter votre portefeuille.', stat:'Nouvelle valeur boursière', next:'p8b' },
 
-  { id:'stock_vulture', type:'stock', cost:105000000000, icon:'📈', stockIdx:2,
+  { id:'stock_vulture', type:'stock', cost:70000000000, icon:'📈', stockIdx:2,
     name:'Débloque : VULTURO FUND', desc:'Variation ~50%. Dette souveraine rachetée à ceux qui n\'ont plus le choix.', stat:'Nouvelle valeur boursière', next:'mod_fiscal' },
 ];
 
@@ -899,13 +1123,15 @@ const UI_TEXT = {
     tickerLoading:'Loading markets...', achievementUnlocked:'Achievement unlocked', crisisTitle:'⚠ Crisis management', suffocate:'BURY IT', ignore:'IGNORE (consequences)',
     wealthLabel:'Net Worth', marketTitle:'Financial Markets', selectedAsset:'Selected asset', invested:'Invested', publicTrust:'Public trust', globalTemp:'Global temperature', currentRise:'Current rise', speed:'Speed', opinionTitle:'Public opinion', revolution:'⚠ REVOLUTION IMMINENT', achievements:'Achievements', grandChoice:'⚡ The Big Choice', dilemmaBody:'Public trust is cracking. You still have two expensive ways to pretend this is strategy.', transition:'♻ Ecological transition', transitionSub:'-80% wealth · -90% future income', disinfo:'📡 Fund disinformation', disinfoSub:'Rising cost · trust recovers while pollution continues',
     factoryTitle:'🏭 Production factory', workers:'Workers', hire:'Hire', production:'Production', materialCost:'Material cost/s', warehouse:'Warehouse stock', sales:'Sales/s', salePrice:'Sale price', demand:'Demand', marketing:'Marketing', upgrade:'Upgrade', margin:'Margin', profit:'Profit/s', overstock:'⚠ OVERSTOCK', factoryWarn:'⚠ Not enough cash — production paused',
-    soundOn:'🔊 SOUND', soundOff:'🔇 SOUND', objective:'[ OBJECTIVE ]', tempAdd:'climate', noFunds:'not enough cash', buy:'BUY', sell:'SELL', frenzyEnded:'Frenzy ended.', interfaceUpdated:'Interface upgraded', factoryReady:'🏭 Factory online', factoryNew:'🏭 New production line', modActive:'activated', stockNew:'📈 New listing', languageToast:'Language changed', restart:'↺ RESTART', hiddenCosts:'WHAT YOUR BALANCE SHEET HIDES'
+    soundOn:'🔊 SOUND', soundOff:'🔇 SOUND', objective:'[ OBJECTIVE ]', tempAdd:'climate', noFunds:'not enough cash', buy:'BUY', sell:'SELL', frenzyEnded:'Frenzy ended.', interfaceUpdated:'Interface upgraded', factoryReady:'🏭 Factory online', factoryNew:'🏭 New production line', modActive:'activated', stockNew:'📈 New listing', languageToast:'Language changed', restart:'↺ RESTART', hiddenCosts:'WHAT YOUR BALANCE SHEET HIDES',
+    clickCount:'{n} clicks', sprintLabel:'SPRINT ×3 (5s · CD 90s)', sprintOn:'ACTIVE', sprintCd:'COOLDOWN', sprintActive:'⚡ Sprint! Passive income ×3 for 5s.'
   },
   fr: {
     tickerLoading:'Chargement des marchés...', achievementUnlocked:'Succès débloqué', crisisTitle:'⚠ Gestion de crise', suffocate:'ÉTOUFFER', ignore:'IGNORER (conséquences)',
-    wealthLabel:'Patrimoine net', marketTitle:'Marchés financiers', selectedAsset:'Valeur sélectionnée', invested:'Investi', publicTrust:'Confiance publique', globalTemp:'Température globale', currentRise:'Hausse actuelle', speed:'Vitesse', opinionTitle:'Opinion publique', revolution:'⚠ RÉVOLUTION IMMINENTE', achievements:'Succès', grandChoice:'⚡ Le Grand Choix', dilemmaBody:'L’opinion publique menace votre empire. Deux options s’offrent à vous.', transition:'♻ Transition écologique', transitionSub:'−80% patrimoine · −90% revenus futurs', disinfo:'📡 Financer la désinformation', disinfoSub:'Coût croissant · confiance ↑ mais pollution continue',
+    wealthLabel:'Patrimoine net', marketTitle:'Marchés financiers', selectedAsset:'Valeur sélectionnée', invested:'Investi', publicTrust:'Confiance publique', globalTemp:'Température globale', currentRise:'Hausse actuelle', speed:'Vitesse', opinionTitle:'Opinion publique', revolution:'⚠ RÉVOLUTION IMMINENTE', achievements:'Succès', grandChoice:'⚡ Le Grand Choix', dilemmaBody:'L\'opinion publique menace votre empire. Deux options s\'offrent à vous.', transition:'♻ Transition écologique', transitionSub:'−80% patrimoine · −90% revenus futurs', disinfo:'📡 Financer la désinformation', disinfoSub:'Coût croissant · confiance ↑ mais pollution continue',
     factoryTitle:'🏭 Usine de production', workers:'Ouvriers', hire:'Embaucher', production:'Production', materialCost:'Coût mat/s', warehouse:'Stock entrepôt', sales:'Ventes/s', salePrice:'Prix vente', demand:'Demande', marketing:'Marketing', upgrade:'Upgrade', margin:'Marge', profit:'Profit/s', overstock:'⚠ SURSTOCK', factoryWarn:'⚠ Caisse insuffisante — production suspendue',
-    soundOn:'🔊 SON', soundOff:'🔇 SON', objective:'[ OBJECTIF ]', tempAdd:'climat', noFunds:'fonds insuffisants', buy:'ACHETER', sell:'VENDRE', frenzyEnded:'Frenzy terminé.', interfaceUpdated:'Interface mise à jour', factoryReady:'🏭 Usine opérationnelle', factoryNew:'🏭 Nouvelle ligne de production', modActive:'activé', stockNew:'📈 Nouvelle valeur', languageToast:'Langue changée', restart:'↺ RECOMMENCER', hiddenCosts:'CE QUE VOS BILANS N’AFFICHENT PAS'
+    soundOn:'🔊 SON', soundOff:'🔇 SON', objective:'[ OBJECTIF ]', tempAdd:'climat', noFunds:'fonds insuffisants', buy:'ACHETER', sell:'VENDRE', frenzyEnded:'Frenzy terminé.', interfaceUpdated:'Interface mise à jour', factoryReady:'🏭 Usine opérationnelle', factoryNew:'🏭 Nouvelle ligne de production', modActive:'activé', stockNew:'📈 Nouvelle valeur', languageToast:'Langue changée', restart:'↺ RECOMMENCER', hiddenCosts:'CE QUE VOS BILANS N\'AFFICHENT PAS',
+    clickCount:'{n} clics', sprintLabel:'SPRINT ×3 (5s · CD 90s)', sprintOn:'ACTIF', sprintCd:'RECHARGE', sprintActive:'⚡ Sprint ! Revenus passifs ×3 pendant 5s.'
   }
 };
 Object.assign(UI_TEXT.en, {
@@ -921,26 +1147,28 @@ Object.assign(UI_TEXT.en, {
   scandalLost:'Scandal unmanaged — reputation damaged.', scandalBuried:'Scandal buried. Press officer active.',
   scandalIgnored:'Scandal ignored — severe consequences.', frenzy:'FRENZY', bonus:'BONUS',
   bubble:'enters bubble phase!', stockDrop:'is falling!', krach:'MARKET CRASH', krachTail:'drop across all markets.',
-  endTitle:'CAPITAL IS COMPLETE.', endStats:'You built an empire worth', endStatsTail:'You control media, governments and armies. Your name is in the history books — the ones you paid to rewrite.',
+  endTitle:'THE EMPIRE IS COMPLETE.', endStats:'You built an empire worth', endStatsTail:'You control media, governments and armies. Your name is in the history books — the ones you paid to rewrite.',
   endWorkers:'workers without stable contracts', endFamilies:'families displaced for "portfolio rotation"', endCo2:'tons of CO2 emitted by your industries',
-  endScandals:'scandals buried · total cost', endRevolts:'public revolts pacified · total cost', endMoral:'"The problem with extreme wealth is not the wealth. It is the power to rewrite the rules while everyone else is still playing by the old ones."'
+  endScandals:'scandals buried · total cost', endRevolts:'public revolts pacified · total cost', endMoral:'"The problem with extreme wealth is not the wealth. It is the power to rewrite the rules while everyone else is still playing by the old ones."',
+  clickCount:'{n} clicks', sprintLabel:'SPRINT ×3 (5s · CD 90s)', sprintOn:'ACTIVE', sprintCd:'COOLDOWN', sprintActive:'⚡ Sprint! Passive income ×3 for 5s.'
 });
 Object.assign(UI_TEXT.fr, {
   pl:'P&L', shares:'actions', sold:'vendu', finalCountdown:'La production universelle commence. Fin dans 5 secondes.',
-  calmTitle:'OPINION PUBLIQUE CRITIQUE', calmBody:'La rue s’organise. Achetez du calme maintenant ou laissez la colère se solidifier.',
+  calmTitle:'OPINION PUBLIQUE CRITIQUE', calmBody:'La rue s\'organise. Achetez du calme maintenant ou laissez la colère se solidifier.',
   calmPay:'CALMER + PAYER', doNothing:'NE RIEN FAIRE', calmNoFunds:'Caisse insuffisante pour calmer qui que ce soit.',
-  calmPaid:'Colère contenue. Facture classifiée.', calmIgnored:'Vous n’avez rien fait. Les gens s’en souviennent.',
+  calmPaid:'Colère contenue. Facture classifiée.', calmIgnored:'Vous n\'avez rien fait. Les gens s\'en souviennent.',
   revolutionStats:'La révolution a renversé votre empire. Vos actifs ont été saisis. Pour la première fois depuis des décennies, les gens ont gagné.',
-  revolutionVictims:'L’empire s’effondre sous le poids de ses contradictions.<br><br>Le peuple reprend ce que vous lui aviez volé.',
-  revolutionMoral:'"L’histoire se répète : ceux qui accaparent tout finissent toujours par tout perdre."',
+  revolutionVictims:'L\'empire s\'effondre sous le poids de ses contradictions.<br><br>Le peuple reprend ce que vous lui aviez volé.',
+  revolutionMoral:'"L\'histoire se répète : ceux qui accaparent tout finissent toujours par tout perdre."',
   transitionConfirm:'TRANSITION ÉCOLOGIQUE : vous perdrez 80% de votre patrimoine et 90% de vos revenus futurs. Confirmer ?',
   transitionDone:'Transition amorcée. La planète respire.', disinfoDone:'Désinformation déployée. Coût suivant',
   scandalLost:'Scandale non maîtrisé — réputation dégradée.', scandalBuried:'Scandale étouffé. Attaché de presse actif.',
   scandalIgnored:'Scandale ignoré — conséquences sévères.', frenzy:'FRENZY', bonus:'BONUS',
   bubble:'entre en phase bulle !', stockDrop:'chute !', krach:'KRACH BOURSIER', krachTail:'de chute sur tous les marchés.',
-  endTitle:"LE CAPITAL EST COMPLET.", endStats:'Vous avez bâti un empire à', endStatsTail:"Vous contrôlez les médias, les gouvernements, les armées. Votre nom figure dans les livres d'histoire — ceux que vous avez fait réécrire.",
+  endTitle:"L'EMPIRE EST COMPLET.", endStats:'Vous avez bâti un empire à', endStatsTail:"Vous contrôlez les médias, les gouvernements, les armées. Votre nom figure dans les livres d'histoire — ceux que vous avez fait réécrire.",
   endWorkers:'travailleurs sans contrat stable', endFamilies:'familles expulsées pour "rotation locative"', endCo2:'tonnes de CO2 émises par vos industries',
-  endScandals:'scandales étouffés · coût total', endRevolts:'révoltes matées · coût total', endMoral:'"Le problème avec les ultra-riches, ce n’est pas leur richesse. C’est qu’elle leur donne le pouvoir de réécrire les règles pendant que tout le monde joue selon les anciennes."'
+  endScandals:'scandales étouffés · coût total', endRevolts:'révoltes matées · coût total', endMoral:'"Le problème avec les ultra-riches, ce n\'est pas leur richesse. C\'est qu\'elle leur donne le pouvoir de réécrire les règles pendant que tout le monde joue selon les anciennes."',
+  clickCount:'{n} clics', sprintLabel:'SPRINT ×3 (5s · CD 90s)', sprintOn:'ACTIF', sprintCd:'RECHARGE', sprintActive:'⚡ Sprint ! Revenus passifs ×3 pendant 5s.'
 });
 Object.assign(UI_TEXT, {
   es: {
@@ -948,22 +1176,24 @@ Object.assign(UI_TEXT, {
     wealthLabel:'Patrimonio neto', marketTitle:'Mercados financieros', selectedAsset:'Activo seleccionado', invested:'Invertido', pl:'P&L', publicTrust:'Confianza pública', globalTemp:'Temperatura global', currentRise:'Aumento actual', speed:'Velocidad', opinionTitle:'Opinión pública', revolution:'⚠ REVOLUCIÓN INMINENTE', achievements:'Logros', grandChoice:'⚡ La gran elección', dilemmaBody:'La confianza pública se agrieta. Aún tiene dos formas caras de fingir estrategia.', transition:'♻ Transición ecológica', transitionSub:'−80% patrimonio · −90% ingresos futuros', disinfo:'📡 Financiar desinformación', disinfoSub:'Coste creciente · confianza ↑ mientras la contaminación sigue',
     factoryTitle:'🏭 Fábrica de producción', workers:'Trabajadores', hire:'Contratar', production:'Producción', materialCost:'Coste mat/s', warehouse:'Stock almacén', sales:'Ventas/s', salePrice:'Precio venta', demand:'Demanda', marketing:'Marketing', upgrade:'Mejorar', margin:'Margen', profit:'Beneficio/s', overstock:'⚠ SOBRESTOCK', factoryWarn:'⚠ Caja insuficiente — producción detenida',
     soundOn:'🔊 SONIDO', soundOff:'🔇 SONIDO', objective:'[ OBJETIVO ]', tempAdd:'clima', noFunds:'fondos insuficientes', buy:'COMPRAR', sell:'VENDER', shares:'acciones', sold:'vendido', frenzyEnded:'Frenesí terminado.', interfaceUpdated:'Interfaz actualizada', factoryReady:'🏭 Fábrica operativa', factoryNew:'🏭 Nueva línea de producción', modActive:'activado', stockNew:'📈 Nueva cotización', languageToast:'Idioma cambiado', restart:'↺ REINICIAR', hiddenCosts:'LO QUE NO MUESTRA SU BALANCE',
+    clickCount:'{n} clics', sprintLabel:'SPRINT ×3 (5s · CD 90s)', sprintOn:'ACTIVO', sprintCd:'RECARGA', sprintActive:'⚡ Sprint! Ingresos pasivos ×3 durante 5s.',
     calmTitle:'OPINIÓN PÚBLICA CRÍTICA', calmBody:'La calle se organiza. Compre calma ahora o deje que la presión se endurezca.', calmPay:'CALMAR + PAGAR', doNothing:'NO HACER NADA', calmNoFunds:'No hay caja suficiente para calmar a nadie.', calmPaid:'Ira contenida. Factura clasificada.', calmIgnored:'No hizo nada. La gente lo recordó.',
     revolutionStats:'La revolución derribó su imperio. Sus activos fueron incautados. Por primera vez en décadas, la gente ganó.', revolutionVictims:'El imperio se derrumba bajo el peso de sus contradicciones.<br><br>El pueblo recupera lo que usted robó.', revolutionMoral:'"La historia se repite: quienes lo acaparan todo acaban perdiéndolo todo."',
     transitionConfirm:'TRANSICIÓN ECOLÓGICA: perderá el 80% de su patrimonio y el 90% de los ingresos futuros. ¿Confirmar?', transitionDone:'Transición iniciada. El planeta respira.', disinfoDone:'Desinformación desplegada. Siguiente coste',
     scandalLost:'Crisis no controlada — reputación dañada.', scandalBuried:'Escándalo enterrado. Portavoz activo.', scandalIgnored:'Escándalo ignorado — consecuencias severas.', finalCountdown:'La producción universal comienza. Final en 5 segundos.', frenzy:'FRENESÍ', bonus:'BONO', bubble:'entra en burbuja!', stockDrop:'cae!', krach:'CRAC BURSÁTIL', krachTail:'de caída en todos los mercados.',
-    endTitle:'EL CAPITAL ESTÁ COMPLETO.', endStats:'Construyó un imperio de', endStatsTail:'Controla medios, gobiernos y ejércitos. Su nombre figura en los libros de historia: los que pagó para reescribir.', endWorkers:'trabajadores sin contrato estable', endFamilies:'familias expulsadas por "rotación de cartera"', endCo2:'toneladas de CO2 emitidas por sus industrias', endScandals:'escándalos enterrados · coste total', endRevolts:'revueltas públicas pacificadas · coste total', endMoral:'"El problema de la riqueza extrema no es la riqueza. Es el poder de reescribir las reglas mientras los demás siguen jugando con las antiguas."'
+    endTitle:'EL IMPERIO ESTÁ COMPLETO.', endStats:'Construyó un imperio de', endStatsTail:'Controla medios, gobiernos y ejércitos. Su nombre figura en los libros de historia: los que pagó para reescribir.', endWorkers:'trabajadores sin contrato estable', endFamilies:'familias expulsadas por "rotación de cartera"', endCo2:'toneladas de CO2 emitidas por sus industrias', endScandals:'escándalos enterrados · coste total', endRevolts:'revueltas públicas pacificadas · coste total', endMoral:'"El problema de la riqueza extrema no es la riqueza. Es el poder de reescribir las reglas mientras los demás siguen jugando con las antiguas."'
   },
   ru: {
     tickerLoading:'Загрузка рынков...', achievementUnlocked:'Достижение открыто', crisisTitle:'⚠ Управление кризисом', suffocate:'ЗАМЯТЬ', ignore:'ИГНОРИРОВАТЬ (последствия)',
     wealthLabel:'Чистое состояние', marketTitle:'Финансовые рынки', selectedAsset:'Выбранный актив', invested:'Инвестировано', pl:'P&L', publicTrust:'Общественное доверие', globalTemp:'Глобальная температура', currentRise:'Текущий рост', speed:'Скорость', opinionTitle:'Общественное мнение', revolution:'⚠ РЕВОЛЮЦИЯ БЛИЗКО', achievements:'Достижения', grandChoice:'⚡ Большой выбор', dilemmaBody:'Общественное доверие трещит. У вас еще есть два дорогих способа назвать это стратегией.', transition:'♻ Экологический переход', transitionSub:'−80% состояния · −90% будущих доходов', disinfo:'📡 Финансировать дезинформацию', disinfoSub:'Рост расходов · доверие ↑, загрязнение продолжается',
     factoryTitle:'🏭 Производственная фабрика', workers:'Рабочие', hire:'Нанять', production:'Производство', materialCost:'Мат./с', warehouse:'Склад', sales:'Продажи/с', salePrice:'Цена', demand:'Спрос', marketing:'Маркетинг', upgrade:'Улучшить', margin:'Маржа', profit:'Прибыль/с', overstock:'⚠ ПЕРЕПРОИЗВОДСТВО', factoryWarn:'⚠ Недостаточно средств — производство остановлено',
     soundOn:'🔊 ЗВУК', soundOff:'🔇 ЗВУК', objective:'[ ЦЕЛЬ ]', tempAdd:'климат', noFunds:'недостаточно средств', buy:'КУПИТЬ', sell:'ПРОДАТЬ', shares:'акций', sold:'продано', frenzyEnded:'Ажиотаж завершен.', interfaceUpdated:'Интерфейс обновлен', factoryReady:'🏭 Фабрика запущена', factoryNew:'🏭 Новая линия производства', modActive:'активировано', stockNew:'📈 Новая котировка', languageToast:'Язык изменен', restart:'↺ НАЧАТЬ СНОВА', hiddenCosts:'ЧТО СКРЫВАЕТ ВАШ БАЛАНС',
+    clickCount:'{n} кликов', sprintLabel:'СПРИНТ ×3 (5с · КД 90с)', sprintOn:'АКТИВЕН', sprintCd:'ПЕРЕЗАРЯДКА', sprintActive:'⚡ Спринт! Пассивный доход ×3 на 5 секунд.',
     calmTitle:'ОБЩЕСТВЕННОЕ МНЕНИЕ КРИТИЧНО', calmBody:'Улица организуется. Купите спокойствие сейчас или дайте давлению затвердеть.', calmPay:'УСПОКОИТЬ + ПЛАТИТЬ', doNothing:'НИЧЕГО НЕ ДЕЛАТЬ', calmNoFunds:'Недостаточно денег, чтобы кого-либо успокоить.', calmPaid:'Гнев сдержан. Счет засекречен.', calmIgnored:'Вы ничего не сделали. Люди это запомнили.',
     revolutionStats:'Революция свергла вашу империю. Активы конфискованы. Впервые за десятилетия люди победили.', revolutionVictims:'Империя рушится под тяжестью собственных противоречий.<br><br>Народ возвращает украденное вами.', revolutionMoral:'"История повторяется: те, кто забирает всё, в итоге теряют всё."',
     transitionConfirm:'ЭКОЛОГИЧЕСКИЙ ПЕРЕХОД: вы потеряете 80% состояния и 90% будущих доходов. Подтвердить?', transitionDone:'Переход начат. Планета дышит.', disinfoDone:'Дезинформация развернута. Следующая цена',
     scandalLost:'Скандал не погашен — репутация повреждена.', scandalBuried:'Скандал замят. Пресс-секретарь активен.', scandalIgnored:'Скандал проигнорирован — тяжелые последствия.', finalCountdown:'Универсальное производство начинается. Финал через 5 секунд.', frenzy:'АЖИОТАЖ', bonus:'БОНУС', bubble:'входит в пузырь!', stockDrop:'падает!', krach:'БИРЖЕВОЙ КРАХ', krachTail:'падения на всех рынках.',
-    endTitle:'КАПИТАЛ ЗАВЕРШЕН.', endStats:'Вы построили империю стоимостью', endStatsTail:'Вы контролируете медиа, правительства и армии. Ваше имя в учебниках истории: тех, которые вы оплатили переписать.', endWorkers:'рабочих без стабильных контрактов', endFamilies:'семей выселено ради "ротации портфеля"', endCo2:'тонн CO2 выброшено вашими индустриями', endScandals:'скандалов замято · общая цена', endRevolts:'общественных бунтов подавлено · общая цена', endMoral:'"Проблема сверхбогатства не в богатстве. Она в власти переписывать правила, пока остальные играют по старым."'
+    endTitle:'ИМПЕРИЯ ЗАВЕРШЕНА.', endStats:'Вы построили империю стоимостью', endStatsTail:'Вы контролируете медиа, правительства и армии. Ваше имя в учебниках истории: тех, которые вы оплатили переписать.', endWorkers:'рабочих без стабильных контрактов', endFamilies:'семей выселено ради "ротации портфеля"', endCo2:'тонн CO2 выброшено вашими индустриями', endScandals:'скандалов замято · общая цена', endRevolts:'общественных бунтов подавлено · общая цена', endMoral:'"Проблема сверхбогатства не в богатстве. Она в власти переписывать правила, пока остальные играют по старым."'
   }
 });
 
@@ -1125,15 +1355,16 @@ ITEM_TEXT.ru = {
 };
 
 const ACH_TEXT = { en: {
-  first_dollar:'First Dollar', grand:'Millionaire', billion:'Billionaire', trillion:'Trillionaire', golden_caught:'Golden Coin', scandal_1:'Cover-Up', scandal_5:'Master of Spin', media_baron:'Media Baron', phase2:'Media Empire', phase3:'Total Architecture', stock_prof:'Financier', factory_1:'Industrialist'
+  first_dollar:'First Dollar', grand:'Millionaire', billion:'Billionaire', trillion:'Trillionaire', golden_caught:'Private Investment', scandal_1:'Cover-Up', scandal_5:'Master of Spin', media_baron:'Media Baron', phase2:'Media Empire', phase3:'Total Architecture', stock_prof:'Financier', factory_1:'Industrialist'
 }};
+Object.assign(ACH_TEXT, {
+  fr: { first_dollar:'Premier Dollar', grand:'Millionnaire', billion:'Milliardaire', trillion:'Trillionnaire', golden_caught:'Investissements Privés', scandal_1:'Couverture', scandal_5:'Maître du mensonge', media_baron:'Baron des médias', phase2:'Empire Médiatique', phase3:'Architecture Totale', stock_prof:'Financier', factory_1:'Industriel' },
+  es: { first_dollar:'Primer dólar', grand:'Millonario', billion:'Multimillonario', trillion:'Trillonario', golden_caught:'Inversión privada', scandal_1:'Encubrimiento', scandal_5:'Maestro del giro', media_baron:'Barón mediático', phase2:'Imperio mediático', phase3:'Arquitectura total', stock_prof:'Financiero', factory_1:'Industrial' },
+  ru: { first_dollar:'Первый доллар', grand:'Миллионер', billion:'Миллиардер', trillion:'Триллионер', golden_caught:'Частные инвестиции', scandal_1:'Сокрытие', scandal_5:'Мастер спина', media_baron:'Медиабарон', phase2:'Медиаимперия', phase3:'Тотальная архитектура', stock_prof:'Финансист', factory_1:'Промышленник' }
+});
 const FAC_TEXT = { en: {
   fac_tshirt:'T-shirts', fac_phone:'Smartphones', fac_pharma:'Generic drugs', fac_weapon:'Weapons components'
 }};
-Object.assign(ACH_TEXT, {
-  es: { first_dollar:'Primer dólar', grand:'Millonario', billion:'Multimillonario', trillion:'Trillonario', golden_caught:'Moneda dorada', scandal_1:'Encubrimiento', scandal_5:'Maestro del giro', media_baron:'Barón mediático', phase2:'Imperio mediático', phase3:'Arquitectura total', stock_prof:'Financiero', factory_1:'Industrial' },
-  ru: { first_dollar:'Первый доллар', grand:'Миллионер', billion:'Миллиардер', trillion:'Триллионер', golden_caught:'Золотая монета', scandal_1:'Сокрытие', scandal_5:'Мастер спина', media_baron:'Медиабарон', phase2:'Медиаимперия', phase3:'Тотальная архитектура', stock_prof:'Финансист', factory_1:'Промышленник' }
-});
 Object.assign(FAC_TEXT, {
   es: { fac_tshirt:'Camisetas', fac_phone:'Smartphones', fac_pharma:'Genéricos', fac_weapon:'Componentes armamentísticos' },
   ru: { fac_tshirt:'Футболки', fac_phone:'Смартфоны', fac_pharma:'Дженерики', fac_weapon:'Оружейные компоненты' }
@@ -1157,13 +1388,13 @@ Object.assign(NEWS_BY_LANG, {
   },
   fr: {
     normal: [
-      'Le marché local ouvre sans surprise.','Trafic fluide sur le périphérique ce matin.','Météo : week-end doux annoncé.','La bibliothèque municipale prolonge ses horaires.','Une boulangerie de quartier reçoit un prix régional.','Nouvelle piste cyclable inaugurée en centre-ville.','La chorale universitaire prépare son concert de printemps.','Bonne saison des fraises chez les producteurs locaux.','Une école rénove sa cour de récréation.','Le musée sera gratuit jeudi.','Les bus reprennent leurs horaires habituels.','Les commerces de proximité signalent une activité stable.','Le jardin partagé gagne douze parcelles.','Le club régional signe un jeune gardien.','Collecte de sang organisée à l’hôpital.','Retards mineurs sur les trains ce matin.','Le cinéma rouvre sa deuxième salle.','Une fontaine publique restaurée après l’hiver.'
+      'Le marché local ouvre sans surprise.','Trafic fluide sur le périphérique ce matin.','Météo : week-end doux annoncé.','La bibliothèque municipale prolonge ses horaires.','Une boulangerie de quartier reçoit un prix régional.','Nouvelle piste cyclable inaugurée en centre-ville.','La chorale universitaire prépare son concert de printemps.','Bonne saison des fraises chez les producteurs locaux.','Une école rénove sa cour de récréation.','Le musée sera gratuit jeudi.','Les bus reprennent leurs horaires habituels.','Les commerces de proximité signalent une activité stable.','Le jardin partagé gagne douze parcelles.','Le club régional signe un jeune gardien.','Collecte de sang organisée à l\'hôpital.','Retards mineurs sur les trains ce matin.','Le cinéma rouvre sa deuxième salle.','Une fontaine publique restaurée après l\'hiver.'
     ],
     tv: [
-      'GUERRE : des frappes d’artillerie font des dizaines de morts près de la frontière.','TERRAIN : les hôpitaux saturent après les bombardements nocturnes.','CLIMAT : les évacuations côtières dépassent 80 000 personnes.','SÉCHERESSE : les récoltes de trois provinces menacées.','MORTALITÉ : les décès liés à la canicule augmentent avec les coupures d’électricité.','FRAPPE AÉRIENNE : un quartier résidentiel touché malgré les pourparlers.','RÉFUGIÉS : des familles traversent le fleuve sous la pluie.','ÉCOLOGIE : une fuite toxique atteint une zone humide protégée.','FRONT : les civils disparus sont comptés à la lampe torche.','INCENDIES : la fumée ferme les écoles de toute la région.','FAMINE : un convoi humanitaire bloqué par les combats.','MONTÉE DES EAUX : un État insulaire prépare sa relocalisation permanente.','EXPLOSION DE MINE : les secours récupèrent de nouveaux corps.','BIODIVERSITÉ : mortalité massive de poissons en aval.','ÉCONOMIE DE GUERRE : les livraisons d’armes accélèrent.','ÉPIDÉMIE : les camps signalent une hausse des décès infantiles.','EFFONDREMENT GLACIAIRE : plusieurs villages appelés à évacuer.','OCÉANS : la mortalité des coraux bat un nouveau record.'
+      'GUERRE : des frappes d\'artillerie font des dizaines de morts près de la frontière.','TERRAIN : les hôpitaux saturent après les bombardements nocturnes.','CLIMAT : les évacuations côtières dépassent 80 000 personnes.','SÉCHERESSE : les récoltes de trois provinces menacées.','MORTALITÉ : les décès liés à la canicule augmentent avec les coupures d\'électricité.','FRAPPE AÉRIENNE : un quartier résidentiel touché malgré les pourparlers.','RÉFUGIÉS : des familles traversent le fleuve sous la pluie.','ÉCOLOGIE : une fuite toxique atteint une zone humide protégée.','FRONT : les civils disparus sont comptés à la lampe torche.','INCENDIES : la fumée ferme les écoles de toute la région.','FAMINE : un convoi humanitaire bloqué par les combats.','MONTÉE DES EAUX : un État insulaire prépare sa relocalisation permanente.','EXPLOSION DE MINE : les secours récupèrent de nouveaux corps.','BIODIVERSITÉ : mortalité massive de poissons en aval.','ÉCONOMIE DE GUERRE : les livraisons d\'armes accélèrent.','ÉPIDÉMIE : les camps signalent une hausse des décès infantiles.','EFFONDREMENT GLACIAIRE : plusieurs villages appelés à évacuer.','OCÉANS : la mortalité des coraux bat un nouveau record.'
     ],
     orwell: [
-      'LA PAIX EST LA GUERRE. LE MINISTÈRE ANNONCE UNE OFFENSIVE PROTECTRICE.','LA LIBERTÉ EST L’OBÉISSANCE. LES CITOYENS CHOISISSENT LE CHOIX APPROUVÉ.','L’IGNORANCE EST LA FORCE. LE CONTEXTE A ÉTÉ ABOLI.','LES ARCHIVES ONT ÉTÉ MISES À JOUR. ELLES L’ONT TOUJOURS ÉTÉ.','LE MALHEUR EST UNE ERREUR DE DONNÉES. MERCI DE VOUS SIGNALER.','TOUS LES ÉCRANS SONT FACULTATIFS. TOUTES LES PIÈCES ONT DES ÉCRANS.','L’AJUSTEMENT QUOTIDIEN DE LA MÉMOIRE AMÉLIORE LE BIEN-ÊTRE NATIONAL.','LES PÉNURIES S’APPELLENT DÉSORMAIS LÉGÈRETÉ.','LE PASSÉ A VOTÉ À L’UNANIMITÉ POUR CHANGER.','VOS PENSÉES PRIVÉES SERONT PROTÉGÉES PAR LE MINISTÈRE.','LE SILENCE EST PARTICIPATION. LA PARTICIPATION EST GRATITUDE.','L’ENNEMI A TOUJOURS ÉTÉ L’ENNEMI DU JOUR.','LA VÉRITÉ ARRIVE DÉSORMAIS PRÉ-CORRIGÉE.','LES QUOTAS D’AMITIÉ AUGMENTENT APRÈS L’AUDIT NOCTURNE.','UN CITOYEN CALME N’A RIEN À SE RAPPELER.','LE MINISTÈRE VOUS REMERCIE POUR VOTRE LOYAUTÉ SPONTANÉE.'
+      'LA PAIX EST LA GUERRE. LE MINISTÈRE ANNONCE UNE OFFENSIVE PROTECTRICE.','LA LIBERTÉ EST L\'OBÉISSANCE. LES CITOYENS CHOISISSENT LE CHOIX APPROUVÉ.','L\'IGNORANCE EST LA FORCE. LE CONTEXTE A ÉTÉ ABOLI.','LES ARCHIVES ONT ÉTÉ MISES À JOUR. ELLES L\'ONT TOUJOURS ÉTÉ.','LE MALHEUR EST UNE ERREUR DE DONNÉES. MERCI DE VOUS SIGNALER.','TOUS LES ÉCRANS SONT FACULTATIFS. TOUTES LES PIÈCES ONT DES ÉCRANS.','L\'AJUSTEMENT QUOTIDIEN DE LA MÉMOIRE AMÉLIORE LE BIEN-ÊTRE NATIONAL.','LES PÉNURIES S\'APPELLENT DÉSORMAIS LÉGÈRETÉ.','LE PASSÉ A VOTÉ À L\'UNANIMITÉ POUR CHANGER.','VOS PENSÉES PRIVÉES SERONT PROTÉGÉES PAR LE MINISTÈRE.','LE SILENCE EST PARTICIPATION. LA PARTICIPATION EST GRATITUDE.','L\'ENNEMI A TOUJOURS ÉTÉ L\'ENNEMI DU JOUR.','LA VÉRITÉ ARRIVE DÉSORMAIS PRÉ-CORRIGÉE.','LES QUOTAS D\'AMITIÉ AUGMENTENT APRÈS L\'AUDIT NOCTURNE.','UN CITOYEN CALME N\'A RIEN À SE RAPPELER.','LE MINISTÈRE VOUS REMERCIE POUR VOTRE LOYAUTÉ SPONTANÉE.'
     ]
   },
   es: {
@@ -1227,7 +1458,7 @@ function toggleLanguage() {
   unlockAudio();
   const idx = LANG_ORDER.indexOf(lang);
   lang = LANG_ORDER[(idx + 1) % LANG_ORDER.length];
-  localStorage.setItem('capital_lang', lang);
+  localStorage.setItem('empire_lang', lang);
   SFX.ui();
   applyLanguage();
   const ticker = document.getElementById('ticker');
@@ -1256,11 +1487,6 @@ function applyLanguage() {
   setText('#opinion-label', tr('publicTrust'));
   setText('#opinion-warn', tr('revolution'));
   setText('#w-ach .w-title', tr('achievements'));
-  setText('#w-dilemma .w-title', tr('grandChoice'));
-  const dilemmaBody = document.querySelector('#w-dilemma .w-title + div'); if (dilemmaBody) dilemmaBody.textContent = tr('dilemmaBody');
-  const dBtns = document.querySelectorAll('#w-dilemma button');
-  if (dBtns[0]) dBtns[0].innerHTML = `${tr('transition')}<br><span style="opacity:.6;font-size:.5rem;font-weight:400;">${tr('transitionSub')}</span>`;
-  if (dBtns[1]) dBtns[1].innerHTML = `${tr('disinfo')}<br><span style="opacity:.6;font-size:.5rem;font-weight:400;">${tr('disinfoSub')}</span>`;
   setText('#factory-zone .fac-title', tr('factoryTitle'));
   const facLabels = document.querySelectorAll('#factory-zone .fac-label');
   [tr('workers'), tr('production'), tr('materialCost'), tr('warehouse'), tr('sales'), tr('salePrice'), tr('demand'), tr('marketing')].forEach((txt, i) => { if (facLabels[i]) facLabels[i].childNodes[0].nodeValue = txt; });
@@ -1280,6 +1506,8 @@ function applyLanguage() {
   buildAchPanel();
   ITEMS.forEach(renderShopItem);
   refreshShop();
+  buildClickUpgList();
+  updateClickCounter();
   if (facUnlocked) renderFactory();
   if (!document.getElementById('w-stock').classList.contains('ui-hide')) renderStockOptions();
   updateOpinion();
@@ -1597,29 +1825,64 @@ function calcIps() {
 ═══════════════════════════════════════════════ */
 function handleClick(e) {
   unlockAudio();
+  totalClicks++;
+  updateClickCounter();
+
   const base = Math.max(.5, 1 + calcIps() * .025);
   const clickMod = mods['__click__'] || 1;
-  const gain = base * clickMod * frenzyMult;
+  const clickUpgMod = getClickMult();
+  const sprintBonus = sprintActive ? SPRINT_MULT : 1;
+
+  // Crit: ~1 in 30 chance
+  const isCrit = Math.random() < 0.033;
+  const critMult = isCrit ? 3 : 1;
+
+  const gain = base * clickMod * clickUpgMod * sprintBonus * critMult * frenzyMult;
   money += gain; totalEarned += gain;
-  SFX.click();
 
+  if (isCrit) {
+    SFX.crit();
+    if (e && e.clientX != null) spawnCritParticles(e.clientX, e.clientY);
+  } else {
+    SFX.click();
+  }
+
+  // Bill visual feedback
   const bill = document.getElementById('bill-svg');
-  if (bill._pressTimer) clearTimeout(bill._pressTimer);
-  bill.classList.remove('pressed');
-  void bill.offsetWidth;
-  bill.classList.add('pressed');
-  bill._pressTimer = setTimeout(() => {
-    bill.classList.remove('pressed');
-    bill._pressTimer = null;
-  }, 90);
+  if (bill) {
+    if (bill._pressTimer) clearTimeout(bill._pressTimer);
+    bill.classList.remove('pressed', 'crit-shake');
+    void bill.offsetWidth;
+    if (isCrit) {
+      bill.classList.add('crit-shake');
+      bill._pressTimer = setTimeout(() => { bill.classList.remove('crit-shake'); bill._pressTimer = null; }, 380);
+    } else {
+      bill.classList.add('pressed');
+      bill._pressTimer = setTimeout(() => { bill.classList.remove('pressed'); bill._pressTimer = null; }, 90);
+    }
+  }
 
-  const f = document.createElement('div');
-  f.className = 'floater';
-  f.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;color:var(--accent);font-size:1rem;`;
-  f.textContent = '+$' + (gain < 100 ? gain.toFixed(1) : fmtN(Math.floor(gain)));
-  document.body.appendChild(f);
-  setTimeout(() => f.remove(), 750);
+  // Floater
+  if (e && e.clientX != null) {
+    const f = document.createElement('div');
+    f.className = isCrit ? 'floater crit' : 'floater';
+    if (!isCrit) {
+      const tier = clickUpgBought.size;
+      const colors = ['var(--accent)','var(--accent)','var(--accent2)','var(--gold)','var(--warn)','var(--danger)','#ff00ff'];
+      f.style.color = colors[Math.min(tier, colors.length - 1)];
+      const sz = Math.min(1.6, 1 + tier * 0.1);
+      f.style.fontSize = sz + 'rem';
+    }
+    f.style.left = e.clientX + 'px';
+    f.style.top  = e.clientY + 'px';
+    f.textContent = (isCrit ? '💥 CRIT! +$' : '+$') + (gain < 100 ? gain.toFixed(1) : fmtN(Math.floor(gain)));
+    document.body.appendChild(f);
+    setTimeout(() => f.remove(), 750);
+  }
+
   updateUI();
+  refreshClickUpgList();
+  checkAchs();
 }
 
 /* ═══════════════════════════════════════════════
@@ -1627,11 +1890,16 @@ function handleClick(e) {
 ═══════════════════════════════════════════════ */
 function spawnGoldenCoin() {
   const el = document.getElementById('golden-coin');
-  const zone = document.getElementById('click-zone');
-  const zr = zone.getBoundingClientRect();
+  const center = document.getElementById('center');
+  const cr = center.getBoundingClientRect();
+  // Position aléatoire dans toute la zone center (pas uniquement sur le bouton)
+  const coinW = 44, coinH = 44;
+  const minX = 30, maxX = cr.width - coinW - 30;
+  const minY = 60, maxY = cr.height - coinH - 80;
+  el.style.position = 'fixed';
+  el.style.left = (cr.left + minX + Math.random() * Math.max(10, maxX - minX)) + 'px';
+  el.style.top  = (cr.top  + minY + Math.random() * Math.max(10, maxY - minY)) + 'px';
   el.style.display = 'flex';
-  el.style.left = (Math.random() * 160 - 30) + 'px';
-  el.style.top = (Math.random() * 60 - 60) + 'px';
   goldenCoinTimer = 8;
   el.onclick = (ev) => {
     unlockAudio();
@@ -1652,6 +1920,7 @@ function spawnGoldenCoin() {
       SFX.coin();
     }
     achEarned.add('golden_caught');
+    checkAchs();
     el.style.display = 'none';
     goldenCoinTimer = 0;
     goldenCoinCD = 90 + Math.random() * 120;
@@ -1744,8 +2013,6 @@ function updateOpinion() {
   warn.style.display = opinion >= 80 ? 'block' : 'none';
   if (opinion >= 60 && !dilemmaShown) {
     dilemmaShown = true;
-    document.getElementById('w-dilemma').classList.remove('ui-hide');
-    toast(tr('calmTitle'), 'warn');
     SFX.alarm();
   }
   if (opinion >= 100) { triggerRevolution(); return; }
@@ -1792,7 +2059,6 @@ function calmOpinion() {
   hideOpinionCrisis();
   if (opinion < 60) {
     dilemmaShown = false;
-    document.getElementById('w-dilemma').classList.add('ui-hide');
   }
   SFX.hush();
   toast(tr('calmPaid'), 'accent');
@@ -1823,33 +2089,8 @@ function triggerRevolution() {
   document.getElementById('endgame').classList.add('show');
 }
 
-function choixTransition() {
-  unlockAudio();
-  if (!confirm(tr('transitionConfirm'))) return;
-  money -= money * .8;
-    carbon = Math.max(0, carbon * .1);
-  opinion = Math.max(0, opinion - 40);
-  mods['__global__'] = (mods['__global__'] || 1) * .10;
-  ips = calcIps();
-  SFX.eco();
-  toast(tr('transitionDone'), 'accent');
-  document.getElementById('w-dilemma').classList.add('ui-hide');
-  updateUI();
-}
-
-function choixDesinfo() {
-  unlockAudio();
-  const cost = Math.max(10000, money * .02 * Math.pow(1.5, desinfoCount));
-  if (money < cost && !inf) { toast(tr('noFunds'), 'danger'); SFX.error(); return; }
-  if (!inf) money -= cost;
-  opinion = Math.max(0, opinion - 20);
-  desinfoCount++;
-  SFX.scandal_explode();
-  toast(`📡 ${tr('disinfoDone')} ×${(1.5 ** desinfoCount).toFixed(1)}.`, 'danger');
-  dilemmaShown = false;
-  document.getElementById('w-dilemma').classList.add('ui-hide');
-  updateUI();
-}
+function choixTransition() { /* supprimé */ }
+function choixDesinfo() { /* supprimé */ }
 
 /* ═══════════════════════════════════════════════
    ECOLOGY
@@ -2324,13 +2565,6 @@ function fmtM(n) {
   return n.toLocaleString('fr-FR');
 }
 /* ═══════════════════════════════════════════════
-   GODMOD
-═══════════════════════════════════════════════ */
-function gm(v) { unlockAudio(); SFX.ui(); money += v; totalEarned += v; updateUI(); }
-function gmInf() { unlockAudio(); SFX.ui(); inf = !inf; document.getElementById('gm-inf').textContent = inf ? 'ON' : 'OFF'; updateUI(); }
-function gmUnlock() { unlockAudio(); SFX.purchase_phase(); ITEMS.forEach(i => visible.add(i.id)); refreshShop(); }
-
-/* ═══════════════════════════════════════════════
    SOUND TOGGLE
 ═══════════════════════════════════════════════ */
 function toggleSound() {
@@ -2355,8 +2589,10 @@ function init() {
   document.getElementById('ticker').style.display = 'none';
   buildShop();
   buildAchPanel();
+  buildClickUpgList();
   applyLanguage();
   updateUI();
+  updateClickCounter();
 
   let lastTick = Date.now();
   setInterval(() => {
@@ -2365,12 +2601,13 @@ function init() {
     lastTick = now;
 
     ips = calcIps();
-    const income = ips * frenzyMult * dt;
+    const income = ips * frenzyMult * (sprintActive ? SPRINT_MULT : 1) * dt;
     money += income; totalEarned += income;
 
     tickFactory(dt);
     tickEco(dt);
     tickIncomePulses(dt);
+    tickSprint(dt);
 
     if (frenzyTimer > 0) {
       frenzyTimer -= dt;
@@ -2420,7 +2657,7 @@ function init() {
 
 /* ── PUBLIC API ── */
 init();
-return { handleClick, handleScandal, ignoreScandal, buyStock, sellStock, hireWorker, facPrice, buyMarketing, selectFacProd, choixTransition, choixDesinfo, calmOpinion, ignoreOpinionCrisis, gm, gmInf, gmUnlock, toggleSound, toggleLanguage };
+return { handleClick, handleScandal, ignoreScandal, buyStock, sellStock, hireWorker, facPrice, buyMarketing, selectFacProd, choixTransition, choixDesinfo, calmOpinion, ignoreOpinionCrisis, toggleSound, toggleLanguage, activateSprint, buyClickUpg };
 })();
 </script>
 </body>
