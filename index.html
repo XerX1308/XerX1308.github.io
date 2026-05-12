@@ -118,7 +118,7 @@
       font-weight: 900;
     }
 
-    /* ── LANGUAGE BUTTON ── */
+    /* ── LANGUAGE BUTTON (single cycling button) ── */
     .lang-toggle {
       grid-column: 3;
       justify-self: end;
@@ -156,6 +156,7 @@
       flex-shrink: 0;
     }
 
+    /* dropdown */
     .lang-dropdown {
       position: absolute;
       top: calc(100% + 6px);
@@ -226,6 +227,7 @@
       align-items: start;
     }
 
+    /* ── GAME CARD 16:9 ── */
     .game-card {
       position: relative;
       display: block;
@@ -339,14 +341,16 @@
   </style>
 </head>
 <body>
-  
+
   <div style="display:none;" aria-hidden="true">
     <h1>Signal - Interactive Games</h1>
-    <p>Minimalist experiences by xerx1308.</p>
+    <p>Hand-coded minimalist web experiences by xerx1308.</p>
   </div>
 
   <main class="site">
+
     <div class="top-bar">
+
       <a class="identity" href="./" aria-label="Signal">
         <svg class="logo-eye" viewBox="0 0 180 96" role="img" aria-hidden="true">
           <path d="M10 48C33 14 68 6 90 6s57 8 80 42c-23 34-58 42-80 42S33 82 10 48Z" fill="#f0322d"/>
@@ -386,6 +390,7 @@
           </button>
         </div>
       </div>
+
     </div>
 
     <section class="library" aria-label="Games">
@@ -399,24 +404,31 @@
 
     <div class="donate-bar">
       <span class="donate-label" data-i18n="donate-label">Support the project</span>
-      <a class="donate-btn" href="https://www.paypal.com/donate/?business=xavvv0504@gmail.com&currency_code=EUR" target="_blank" rel="noopener noreferrer">
+      <a
+        class="donate-btn"
+        href="https://www.paypal.com/donate/?business=xavvv0504@gmail.com&currency_code=EUR"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z" fill="currentColor"/>
         </svg>
         <span data-i18n="donate-btn">Support Signal</span>
       </a>
     </div>
+
   </main>
 
   <script>
-    const eye = document.querySelector('.logo-eye');
+    /* ── PUPIL TRACKER ── */
+    const eye   = document.querySelector('.logo-eye');
     const pupil = document.querySelector('.pupil-group');
 
     window.addEventListener('pointermove', e => {
       if (!eye || !pupil) return;
-      const r = eye.getBoundingClientRect();
+      const r  = eye.getBoundingClientRect();
       const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-      const dx = Math.max(-8, Math.min(8, ((e.clientX - cx) / r.width) * 22));
+      const dx = Math.max(-8, Math.min(8, ((e.clientX - cx) / r.width)  * 22));
       const dy = Math.max(-5, Math.min(5, ((e.clientY - cy) / r.height) * 14));
       pupil.style.transform = `translate(${dx}px, ${dy}px)`;
     }, { passive: true });
@@ -425,27 +437,59 @@
       if (pupil) pupil.style.transform = 'translate(0,0)';
     }, { passive: true });
 
+    /* ── i18n ── */
     const T = {
-      en: { label: 'EN', 'donate-label': 'Support the project', 'donate-btn': 'Support Signal', 'game-capital': 'Capital' },
-      fr: { label: 'FR', 'donate-label': 'Soutenir le projet', 'donate-btn': 'Soutenir Signal', 'game-capital': 'Capital' },
-      es: { label: 'ES', 'donate-label': 'Apoyar el proyecto', 'donate-btn': 'Apoyar Signal', 'game-capital': 'Capital' },
-      ru: { label: 'РУ', 'donate-label': 'Поддержать projet', 'donate-btn': 'Поддержать Signal', 'game-capital': 'Капитал' },
+      en: {
+        label:           'EN',
+        'donate-label':  'Support the project',
+        'donate-btn':    'Support Signal',
+        'game-capital':  'Capital',
+      },
+      fr: {
+        label:           'FR',
+        'donate-label':  'Soutenir le projet',
+        'donate-btn':    'Soutenir Signal',
+        'game-capital':  'Capital',
+      },
+      es: {
+        label:           'ES',
+        'donate-label':  'Apoyar el proyecto',
+        'donate-btn':    'Apoyar Signal',
+        'game-capital':  'Capital',
+      },
+      ru: {
+        label:           'РУ',
+        'donate-label':  'Поддержать projet',
+        'donate-btn':    'Поддержать Signal',
+        'game-capital':  'Капитал',
+      },
     };
 
     function applyLang(lang) {
       const t = T[lang] || T.en;
+
       document.documentElement.lang = lang;
+
+      // button label
       document.getElementById('langBtnLabel').textContent = t.label;
+
+      // all data-i18n elements
       document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.dataset.i18n;
         if (t[key] !== undefined) el.textContent = t[key];
       });
-      document.querySelectorAll('.lang-option').forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
+
+      // active option highlight
+      document.querySelectorAll('.lang-option').forEach(o =>
+        o.classList.toggle('active', o.dataset.lang === lang)
+      );
+
       localStorage.setItem('signal-lang', lang);
     }
 
-    const toggle = document.getElementById('langToggle');
-    const langBtn = document.getElementById('langBtn');
+    /* ── DROPDOWN TOGGLE ── */
+    const toggle   = document.getElementById('langToggle');
+    const langBtn  = document.getElementById('langBtn');
 
     langBtn.addEventListener('click', e => {
       e.stopPropagation();
@@ -467,10 +511,11 @@
       });
     });
 
+    /* ── INIT ── */
     (function () {
-      const saved = localStorage.getItem('signal-lang');
+      const saved   = localStorage.getItem('signal-lang');
       const browser = (navigator.language || '').slice(0, 2).toLowerCase();
-      const lang = (T[saved] ? saved : null) || (T[browser] ? browser : 'en');
+      const lang    = (T[saved] ? saved : null) || (T[browser] ? browser : 'en');
       applyLang(lang);
     })();
   </script>
