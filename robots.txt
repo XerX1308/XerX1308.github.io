@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
 Sitemap: https://xerx1308.github.io/Signal.github.io/sitemap.xml
