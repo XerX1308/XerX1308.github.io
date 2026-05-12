@@ -6,12 +6,13 @@
   
   <title>Signal — Mini-games & Interactive Experiences</title>
   <meta name="description" content="Signal is a collection of minimalist mini-games and interactive web experiences created by xerx1308. Play unique, hand-coded games instantly.">
-  
   <link rel="canonical" href="https://xerx1308.github.io/Signal.github.io/" />
 
   <meta property="og:title" content="Signal">
-  <meta property="og:description" content="Signal — Games.">
-  
+  <meta property="og:description" content="Explore a library of unique mini-games and digital toys.">
+  <meta property="og:url" content="https://xerx1308.github.io/Signal.github.io/">
+  <meta property="og:type" content="website">
+
   <style>
     :root {
       --bg: #080a07;
@@ -251,9 +252,9 @@
 </head>
 <body>
   
-  <div style="display:none;">
+  <div style="display:none;" aria-hidden="true">
     <h1>Signal - Mini-jeux par xerx1308</h1>
-    <p>Une plateforme de petits jeux web et d'expériences interactives minimalistes inspirées par Neal.fun.</p>
+    <p>Collection de jeux web minimalistes et expériences interactives originales. Jouez à Capital et d'autres pépites numériques codées à la main.</p>
   </div>
 
   <main class="site">
@@ -262,8 +263,6 @@
         <svg class="logo-eye" viewBox="0 0 180 96" role="img" aria-hidden="true">
           <path d="M10 48C33 14 68 6 90 6s57 8 80 42c-23 34-58 42-80 42S33 82 10 48Z" fill="#f0322d"/>
           <path d="M19 48C43 24 71 17 90 17s47 7 71 31c-24 24-52 31-71 31S43 72 19 48Z" fill="#9b2028" opacity="0.74"/>
-          <path d="M10 48C33 14 68 6 90 6s57 8 80 42" fill="none" stroke="#ff4038" stroke-width="4" stroke-linecap="round"/>
-          <path d="M10 48c23 34 58 42 80 42s57-8 80-42" fill="none" stroke="#ef332e" stroke-width="4" stroke-linecap="round"/>
           <g class="pupil-group">
             <ellipse cx="90" cy="49" rx="24" ry="30" fill="#060706"/>
             <circle cx="90" cy="33" r="15" fill="#ef332e"/>
@@ -285,10 +284,10 @@
         </button>
 
         <div class="lang-dropdown" role="listbox" id="langDropdown">
-          <button class="lang-option active" data-lang="en" role="option"><span class="flag">🇬🇧</span> English</button>
-          <button class="lang-option" data-lang="fr" role="option"><span class="flag">🇫🇷</span> Français</button>
-          <button class="lang-option" data-lang="es" role="option"><span class="flag">🇪🇸</span> Español</button>
-          <button class="lang-option" data-lang="ru" role="option"><span class="flag">🇷🇺</span> Русский</button>
+          <button class="lang-option active" data-lang="en" role="option">English</button>
+          <button class="lang-option" data-lang="fr" role="option">Français</button>
+          <button class="lang-option" data-lang="es" role="option">Español</button>
+          <button class="lang-option" data-lang="ru" role="option">Русский</button>
         </div>
       </div>
     </div>
@@ -296,7 +295,7 @@
     <section class="library" aria-label="Games">
       <div class="games-grid">
         <a class="game-card" href="./capital.html">
-          <img src="./assets/capital-cover.jpeg" alt="Capital game cover">
+          <img src="./assets/capital-cover.jpeg" alt="Capture du jeu Capital - Signal">
           <span class="game-label" data-i18n="game-capital">Capital</span>
         </a>
       </div>
@@ -305,8 +304,8 @@
     <div class="donate-bar">
       <span class="donate-label" data-i18n="donate-label">Support the project</span>
       <a class="donate-btn" href="https://www.paypal.com/donate/?business=xavvv0504@gmail.com&currency_code=EUR" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z" fill="#009cde"/>
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width: 18px; height: 18px;">
+          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.93 4.778-4.005 7.201-9.138 7.201h-2.19a.563.563 0 0 0-.556.479l-1.187 7.527h-.506l-.24 1.516a.56.56 0 0 0 .554.647h3.882c.46 0 .85-.334.922-.788.06-.26.76-4.852.816-5.09a.932.932 0 0 1 .923-.788h.58c3.76 0 6.705-1.528 7.565-5.946.36-1.847.174-3.388-.777-4.471z" fill="currentColor"/>
         </svg>
         <span data-i18n="donate-btn">Support Signal</span>
       </a>
@@ -314,6 +313,7 @@
   </main>
 
   <script>
+    /* ── LOGO EYE TRACKER ── */
     const eye = document.querySelector('.logo-eye');
     const pupil = document.querySelector('.pupil-group');
 
@@ -330,11 +330,12 @@
       if (pupil) pupil.style.transform = 'translate(0,0)';
     }, { passive: true });
 
+    /* ── INTERNATIONALIZATION ── */
     const T = {
-      en: { label: 'EN', 'donate-label': 'Support the project', 'donate-btn': 'Support Signal', 'page-desc': 'Signal — Games.', 'game-capital': 'Capital' },
-      fr: { label: 'FR', 'donate-label': 'Soutenir le projet', 'donate-btn': 'Soutenir Signal', 'page-desc': 'Signal — Jeux.', 'game-capital': 'Capital' },
-      es: { label: 'ES', 'donate-label': 'Apoyar el proyecto', 'donate-btn': 'Apoyar Signal', 'page-desc': 'Signal — Juegos.', 'game-capital': 'Capital' },
-      ru: { label: 'РУ', 'donate-label': 'Поддержать проект', 'donate-btn': 'Поддержать Signal', 'page-desc': 'Signal — Игры.', 'game-capital': 'Капитал' },
+      en: { label: 'EN', 'donate-label': 'Support the project', 'donate-btn': 'Support Signal', 'game-capital': 'Capital' },
+      fr: { label: 'FR', 'donate-label': 'Soutenir le projet', 'donate-btn': 'Soutenir Signal', 'game-capital': 'Capital' },
+      es: { label: 'ES', 'donate-label': 'Apoyar el proyecto', 'donate-btn': 'Apoyar Signal', 'game-capital': 'Capital' },
+      ru: { label: 'РУ', 'donate-label': 'Поддержать проект', 'donate-btn': 'Поддержать Signal', 'game-capital': 'Капитал' },
     };
 
     function applyLang(lang) {
